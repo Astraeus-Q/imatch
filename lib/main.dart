@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
         title: Text("Image Matching"),
         centerTitle: true,
         actions: <Widget> [
-          IconButton(onPressed: () {}, icon: Icon(Icons.search))
+          IconButton(onPressed: () {}, icon: Icon(Icons.help_outline))
         ],
         backgroundColor: Colors.cyan,
       ),
@@ -59,6 +59,42 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("images/upload.jpg"),
+                  // image: AssetImage(isButtonPressed ? 'image2.png' : 'image1.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+
+            SizedBox(height: 100),
+
+            ElevatedButton(
+              onPressed: () {
+                print("Upload Image");
+              },
+              child: Text("Upload Image"),
+            ),
+
+            SizedBox(height: 20), //
+
+            // TextButton(
+            //   onPressed: () {
+            //     print('TextButton Clicked!');
+            //   },
+            //   child: Text('TextButton'),
+            // ),
+          ],
+        ),
+      )
     );
   }
 }
