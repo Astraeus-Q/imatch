@@ -1,5 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 
 // Entry Function
 void main() {
@@ -7,7 +8,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -40,22 +41,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
-  @ override
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  File? _image;
+
+  Future<void> _getImageFromGallery() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Image Matching"),
         centerTitle: true,
-        actions: <Widget> [
+        actions: <Widget>[
           IconButton(onPressed: () {}, icon: Icon(Icons.help_outline))
         ],
         backgroundColor: Colors.cyan,
       ),
       drawer: Drawer(
         child: ListView(
-          children: <Widget> [
-            UserAccountsDrawerHeader(accountName: Text("Astraeus"), accountEmail: Text("123456@ntu.com"))
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+                accountName: Text("Astraeus"), accountEmail: Text("123456@ntu.com"))
           ],
         ),
       ),
@@ -67,34 +86,28 @@ class HomePage extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                image: DecorationImage(
+                image: _image != null
+                    ? DecorationImage(
+                  image: FileImage(_image!),
+                  fit: BoxFit.cover,
+                )
+                    : DecorationImage(
                   image: AssetImage("images/upload.jpg"),
-                  // image: AssetImage(isButtonPressed ? 'image2.png' : 'image1.png'),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-
             SizedBox(height: 100),
-
             ElevatedButton(
               onPressed: () {
-                print("Upload Image");
+                _getImageFromGallery();
               },
               child: Text("Upload Image"),
             ),
-
             SizedBox(height: 20), //
-
-            // TextButton(
-            //   onPressed: () {
-            //     print('TextButton Clicked!');
-            //   },
-            //   child: Text('TextButton'),
-            // ),
           ],
         ),
-      )
+      ),
     );
   }
 }
