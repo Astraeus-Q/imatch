@@ -1,15 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+
 
 // Entry Function
-void main() {
-  runApp(const MyApp());
+void main(){
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -47,9 +48,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<dynamic> imgVecData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    rootBundle.loadString('assets/img_vec_1504.json').then((String jsonString) {
+      setState(() {
+        imgVecData = json.decode(jsonString);
+      });
+    }).catchError((error) {
+      print('Error loading JSON data: $error');
+    });
+  }
+
   File? _image;
 
   Future<void> _getImageFromGallery() async {
+    // Select image from Gallery.
+    // /sdcard/Pictures/JPEGImages
     final imagePicker = ImagePicker();
     final pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
     setState(() {
@@ -57,6 +74,13 @@ class _HomePageState extends State<HomePage> {
         _image = File(pickedFile.path);
       }
     });
+  }
+
+  void _imgSearch() async {
+    // String firstImage = imgVecData['images'][0]['url'];
+    String firstImage = imgVecData[0]['img_name'];
+    print('First image name: $firstImage');
+
   }
 
   @override
@@ -103,6 +127,17 @@ class _HomePageState extends State<HomePage> {
                 _getImageFromGallery();
               },
               child: Text("Upload Image"),
+            ),
+            SizedBox(height: 20), //
+            ElevatedButton(
+              onPressed: () {
+                _imgSearch();
+              },
+              style: ButtonStyle(
+                // backgroundColor: MaterialStateProperty.all<Color>(Colors.blue), // Change the background color
+                // minimumSize: MaterialStateProperty.all<Size>(Size(200, 50))
+              ),
+              child: Text("Match Image"),
             ),
             SizedBox(height: 20), //
           ],
